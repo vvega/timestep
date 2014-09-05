@@ -60,6 +60,16 @@ var RawAudio = Class(function () {
 			audio.oldPause();
 		}
 
+		audio.setPlaybackRate = function(rate) {
+			if(rate) {
+				audio.playbackRate = rate;
+			}
+		};
+
+		audio.getPlaybackRate = function() {
+			return audio.playbackRate;
+		}
+
 		// Hook into accessibility features.
 		GLOBAL.ACCESSIBILITY.subscribe('MuteChange', this, function () {
 			audio.muted = GLOBAL.ACCESSIBILITY.muted;
@@ -159,6 +169,16 @@ var MultiSound = Class(function () {
 			src.volume = volume;
 		}
 	};
+
+	this.setPlaybackRate = function(rate) {
+		for (var i = 0, src; src = this._sources[i]; i++) {
+			src.setPlaybackRate(rate);
+		}
+	};
+
+	this.getPlaybackRate = function() {
+		return this._lastSrc ? this._lastSrc.playbackRate : 0;
+	}
 
 	this.stop = function () {
 		for (var i = 0, src; src = this._sources[i]; ++i) {
@@ -480,6 +500,28 @@ exports = Class(Emitter, function (supr) {
 
 		return true;
 	};
+
+	this.setPlaybackRate = function (name, rate) {
+		var sound = this._sounds[name];
+		if (!sound) {
+			logger.log("warning: no sound of that name");
+			return false;
+		}
+
+		sound.setPlaybackRate(rate);
+
+		return true;
+	}
+
+	this.getPlaybackRate = function(name) {
+		var sound = this._sounds[name];
+		if(!sound) {
+			logger.log("warning: no sound of that name");
+			return false;
+		}
+
+		return sound.getPlaybackRate();
+	}
 
 	this.isPaused = function (name) {
 		var sound = this._sounds[name];
