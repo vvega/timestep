@@ -81,6 +81,10 @@ var RawAudio = Class(function () {
 			audio.oldPause();
 		};
 
+		audio.setPlaybackRate = function(rate) {
+			rate && audio.playbackRate = rate;
+		};
+
 		return audio;
 	};
 
@@ -95,6 +99,10 @@ var RawAudio = Class(function () {
 			this.currentTime = 0;
 		}
 	};
+
+	this.setPlaybackRate = function(rate) {
+		this.playbackRate = rate;
+	}
 });
 
 /**
@@ -258,6 +266,16 @@ var MultiSound = Class(function () {
 				this._lastSrc.currentTime = t;
 			} else {
 				setTimeout(bind(this, 'setTime', t + 0.01), 10);
+			}
+		}
+	};
+
+	this.setPlaybackRate = function (r) {
+		if (this._useAudioContext) {
+			if(this._lastSrc) this._lastSrc.playbackRate.value = r;
+		} else {
+			for (var i = 0, src; src = this._sources[i]; ++i) {
+				src.setPlaybackRate(r);
 			}
 		}
 	};
@@ -544,6 +562,15 @@ exports = Class(Emitter, function (supr) {
 			return false;
 		}
 		sound.setTime(t || 0);
+		return true;
+	};
+
+	this.setPlaybackRate = function (name, t) {
+		var sound = this.getSound(name);
+		if (!sound) {
+			return false;
+		}
+		sound.setPlaybackRate(t || 1);
 		return true;
 	};
 
