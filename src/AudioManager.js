@@ -101,6 +101,10 @@ var RawAudio = Class(function () {
 			this.currentTime = 0;
 		}
 	};
+
+	this.setPlaybackRate = function(rate) {
+		this.playbackRate = rate;
+	}
 });
 
 /**
