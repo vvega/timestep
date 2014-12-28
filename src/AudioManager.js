@@ -82,7 +82,9 @@ var RawAudio = Class(function () {
 		};
 
 		audio.setPlaybackRate = function(rate) {
-			rate && audio.playbackRate = rate;
+			if(rate) {
+				audio.playbackRate = rate;
+			}
 		};
 
 		return audio;
@@ -99,10 +101,6 @@ var RawAudio = Class(function () {
 			this.currentTime = 0;
 		}
 	};
-
-	this.setPlaybackRate = function(rate) {
-		this.playbackRate = rate;
-	}
 });
 
 /**
@@ -272,7 +270,9 @@ var MultiSound = Class(function () {
 
 	this.setPlaybackRate = function (r) {
 		if (this._useAudioContext) {
-			if(this._lastSrc) this._lastSrc.playbackRate.value = r;
+			if(this._lastSrc) { 
+				this._lastSrc.playbackRate.value = r;
+			}
 		} else {
 			for (var i = 0, src; src = this._sources[i]; ++i) {
 				src.setPlaybackRate(r);
