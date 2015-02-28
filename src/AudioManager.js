@@ -81,12 +81,6 @@ var RawAudio = Class(function () {
 			audio.oldPause();
 		};
 
-		audio.setPlaybackRate = function(rate) {
-			if(rate) {
-				audio.playbackRate = rate;
-			}
-		};
-
 		return audio;
 	};
 
@@ -101,10 +95,6 @@ var RawAudio = Class(function () {
 			this.currentTime = 0;
 		}
 	};
-
-	this.setPlaybackRate = function(rate) {
-		this.playbackRate = rate;
-	}
 });
 
 /**
@@ -142,6 +132,7 @@ var MultiSound = Class(function () {
 		var extTestExp = new RegExp(ext + '$', 'i');
 		var loop = this.loop;
 		var volume = opts.volume !== undefined ? opts.volume : 1;
+		var rate = opts.rate !== undefined ? opts.rate : 1;
 
 		// HTML5 hack for browsers
 		var isPaused = bind(this, 'isPaused');
@@ -173,6 +164,7 @@ var MultiSound = Class(function () {
 				if (audio) {
 					audio.loop = loop;
 					audio.volume = volume;
+					audio.rate = rate;
 					audio.isBackgroundMusic = opts.background;
 					audio.src = fullPath;
 					audio.preload = ((audio.readyState !== 4) || (soundManager._preload && !opts.background)) ? "auto" : "none";
@@ -279,7 +271,7 @@ var MultiSound = Class(function () {
 			}
 		} else {
 			for (var i = 0, src; src = this._sources[i]; ++i) {
-				src.setPlaybackRate(r);
+				src.rate = r;
 			}
 		}
 	};
@@ -569,13 +561,13 @@ exports = Class(Emitter, function (supr) {
 		return true;
 	};
 
-	this.setPlaybackRate = function (name, t) {
+	this.setPlaybackRate = function (name, r) {
 		var sound = this.getSound(name);
-		if (!sound) {
-			return false;
+		if (sound) {
+			return sound.setPlaybackRate(r);
+		} else {
+			return null;
 		}
-		sound.setPlaybackRate(t || 1);
-		return true;
 	};
 
 	this.getTime = function (name) {
